@@ -51,7 +51,7 @@ def move_left(mas):  # движение влево
     return mas
 
 
-def move_right(mas):
+def move_right(mas):  # движение вправо
     for row in mas:
         while 0 in row:  # сдвиг чисел вправо
             row.remove(0)
@@ -66,7 +66,7 @@ def move_right(mas):
     return mas
 
 
-def move_up(mas):
+def move_up(mas):  # движение вверх
     for j in range(4):
         column = []
         for i in range(4):
@@ -84,7 +84,7 @@ def move_up(mas):
     return mas
 
 
-def move_down(mas):
+def move_down(mas):  # движение вниз
     for j in range(4):
         column = []
         for i in range(4):
@@ -102,6 +102,12 @@ def move_down(mas):
     return mas
 
 
+def can_move(mas):  # проверка на то, возможно ли совершить одно из предыдущих четырех действий
+    for i in range(3):
+        for j in range(3):
+            if (mas[i][j] == mas[i + 1][j] and mas[i][j] != 0) or (mas[i][j] == mas[i][j + 1] and mas[i][j] != 0):
+                return True
+    return False
 # def is_zero_in_mas(mas):  # проверяем массив на наличие пустых ячеек
 #     for row in mas:
 #         if 0 in row:

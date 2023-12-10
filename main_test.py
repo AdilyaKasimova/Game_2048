@@ -1,6 +1,6 @@
 import unittest
 from logic import get_number_from_index, get_empty_list, get_index_from_number, move_left, move_right, move_up, \
-    move_down
+    move_down, can_move
 
 
 class Test_2048(unittest.TestCase):
@@ -125,6 +125,22 @@ class Test_2048(unittest.TestCase):
             [8, 4, 8, 4]
         ]
         self.assertEqual(move_down(mas), rez)
+
+    def test_can_move(self):
+        mas = [
+            [2, 2, 0, 0],
+            [2, 0, 4, 2],
+            [4, 4, 0, 2],
+            [4, 0, 4, 0]
+        ]
+        self.assertEqual(can_move(mas), True)
+        mas = [
+            [4, 2, 1, 3],
+            [2, 1, 3, 4],
+            [1, 3, 4, 2],
+            [3, 4, 2, 1]
+        ]
+        self.assertEqual(can_move(mas), False)
 
     # def test_is_zero_in_mas(self):
     #     mas = [

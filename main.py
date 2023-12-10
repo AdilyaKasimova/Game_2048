@@ -69,7 +69,7 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("2048")
 draw_interface()
 pygame.display.update()
-while get_empty_list(mas):  # вставляем в массив рандомное число (2 или 4)
+while get_empty_list(mas) or can_move(mas):  # условия, при которых игра продолжается
     for event in pygame.event.get():
         if event.type == pygame.QUIT:  # выход из игры
             pygame.quit()
@@ -83,10 +83,11 @@ while get_empty_list(mas):  # вставляем в массив рандомн�
                 mas = move_up(mas)
             elif event.key == pygame.K_DOWN:
                 mas = move_down(mas)
-            empty = get_empty_list(mas)
-            random.shuffle(empty)  # перемешиванием массив
-            random_num = empty.pop()
-            x, y = get_index_from_number(random_num)
-            mas = insert_2_or_4(mas, x, y)
-            draw_interface()
-            pygame.display.update()
+            if get_empty_list(mas):
+                empty = get_empty_list(mas)  # вставляем в массив рандомное число (2 или 4)
+                random.shuffle(empty)  # (перемешиванием массив)
+                random_num = empty.pop()
+                x, y = get_index_from_number(random_num)
+                mas = insert_2_or_4(mas, x, y)
+                draw_interface()
+                pygame.display.update()
