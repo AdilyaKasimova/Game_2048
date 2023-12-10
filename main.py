@@ -3,15 +3,26 @@ import pygame
 import sys
 
 
-def draw_interface():  # отрисовка интерфейса с заполнением ячеек числами
+# consolas,franklingothicmedium,microsoftjhenghei
+def draw_interface(score, delta=0):  # отрисовка интерфейса с заполнением ячеек числами
     pygame.draw.rect(screen, COLOR_TITLE, TITLE_REC)  # создание титульника
-    font = pygame.font.SysFont("clear sans", 70)  # шрифт
+    font = pygame.font.SysFont("consolas", 70)  # шрифт для чисел
+    font_score = pygame.font.SysFont("consolas", 48)  # шрифт для счёта
+    font_delta = pygame.font.SysFont("consolas", 30)
+    text_score = font_score.render("Score: ", True, COLOR_SCORE)  # аргументы = текст, обтекание текста, цвет
+    text_score_value = font_score.render(f'{score}', True, COLOR_SCORE)
+    screen.blit(text_score, (20, 35))
+    screen.blit(text_score_value, (185, 35))
+    if delta > 0:
+        text_delta = font_delta.render(f"+{delta}", True, COLOR_SCORE)
+        screen.blit(text_delta, (185, 73))
+
     pretty_print(mas)
     for row in range(BLOCKS):  # создание блоков поля и отображение в них чисел
         for column in range(BLOCKS):
             value = mas[row][column]
             if value == 2 or value == 4:
-                text = font.render(f'{value}', True, COLOR_FOR_2_AND_4)  # аргументы = текст, обтекание текста, цвет
+                text = font.render(f'{value}', True, COLOR_FOR_2_AND_4)
             else:
                 text = font.render(f'{value}', True, COLOR_FOR_OTHER)
             w = column * SIZE_BLOCK + (column + 1) * MARGIN  # координата блока по Х
@@ -20,7 +31,7 @@ def draw_interface():  # отрисовка интерфейса с заполн
             if value != 0:
                 font_w, font_h = text.get_size()  # определение длины и ширины текста
                 text_x = w + (SIZE_BLOCK - font_w) / 2
-                text_y = h + (SIZE_BLOCK - font_h) / 2
+                text_y = h + (SIZE_BLOCK - font_h) / 2 + 4
                 screen.blit(text, (text_x, text_y))
 
 
@@ -49,7 +60,7 @@ WHITE = (255, 255, 255)
 GRAY = (130, 130, 130)
 COLOR_TITLE = (250, 248, 239)
 COLOR_MARGIN = (187, 173, 160)
-COLOR_FOR_2_AND_4 = (119, 110, 101)
+COLOR_FOR_2_AND_4 = COLOR_SCORE = (119, 110, 101)
 COLOR_FOR_OTHER = (245, 245, 245)
 BLOCKS = 4
 SIZE_BLOCK = 110
@@ -58,6 +69,7 @@ MARGIN = 10
 WIDTH = BLOCKS * SIZE_BLOCK + (BLOCKS + 1) * MARGIN
 HEIGHT = WIDTH + HEIGHT_TITLE
 TITLE_REC = pygame.Rect((0, 0, WIDTH, HEIGHT_TITLE))
+score = 0
 
 mas[1][3] = 2
 mas[3][0] = 4
@@ -67,7 +79,7 @@ pretty_print(mas)
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("2048")
-draw_interface()
+draw_interface(score)
 pygame.display.update()
 while get_empty_list(mas) or can_move(mas):  # условия, при которых игра продолжается
     for event in pygame.event.get():
@@ -75,19 +87,21 @@ while get_empty_list(mas) or can_move(mas):  # условия, при котор
             pygame.quit()
             sys.exit(0)
         elif event.type == pygame.KEYDOWN:  # процесс игры
+            delta = 0
             if event.key == pygame.K_LEFT:
-                mas = move_left(mas)
+                mas, delta = move_left(mas)
             elif event.key == pygame.K_RIGHT:
-                mas = move_right(mas)
+                mas, delta = move_right(mas)
             elif event.key == pygame.K_UP:
-                mas = move_up(mas)
+                mas, delta = move_up(mas)
             elif event.key == pygame.K_DOWN:
-                mas = move_down(mas)
+                mas, delta = move_down(mas)
+            score += delta
             if get_empty_list(mas):
                 empty = get_empty_list(mas)  # вставляем в массив рандомное число (2 или 4)
                 random.shuffle(empty)  # (перемешиванием массив)
                 random_num = empty.pop()
                 x, y = get_index_from_number(random_num)
                 mas = insert_2_or_4(mas, x, y)
-                draw_interface()
+                draw_interface(score, delta)
                 pygame.display.update()

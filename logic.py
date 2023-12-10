@@ -37,6 +37,7 @@ def insert_2_or_4(mas, x, y):  # заполнение ячеек 2 (вероят
 
 
 def move_left(mas):  # движение влево
+    delta = 0
     for row in mas:
         while 0 in row:  # сдвиг чисел влево
             row.remove(0)
@@ -46,12 +47,14 @@ def move_left(mas):  # движение влево
         for j in range(3):
             if mas[i][j] == mas[i][j + 1] and mas[i][j] != 0:
                 mas[i][j] *= 2
+                delta += mas[i][j]
                 mas[i].pop(j + 1)
                 mas[i].append(0)
-    return mas
+    return mas, delta
 
 
 def move_right(mas):  # движение вправо
+    delta = 0
     for row in mas:
         while 0 in row:  # сдвиг чисел вправо
             row.remove(0)
@@ -61,12 +64,14 @@ def move_right(mas):  # движение вправо
         for j in range(3, 0, -1):
             if mas[i][j] == mas[i][j - 1] and mas[i][j] != 0:
                 mas[i][j] *= 2
+                delta += mas[i][j]
                 mas[i].pop(j - 1)
                 mas[i].insert(0, 0)
-    return mas
+    return mas, delta
 
 
 def move_up(mas):  # движение вверх
+    delta = 0
     for j in range(4):
         column = []
         for i in range(4):
@@ -77,14 +82,16 @@ def move_up(mas):  # движение вверх
         for i in range(3):
             if column[i] == column[i + 1] and column[i] != 0:
                 column[i] *= 2
+                delta += column[i]
                 column.pop(i + 1)
                 column.append(0)
         for i in range(4):  # переворачиваем строку в столбец
             mas[i][j] = column[i]
-    return mas
+    return mas, delta
 
 
 def move_down(mas):  # движение вниз
+    delta = 0
     for j in range(4):
         column = []
         for i in range(4):
@@ -95,11 +102,12 @@ def move_down(mas):  # движение вниз
         for i in range(3, 0, -1):
             if column[i] == column[i - 1] and column[i] != 0:
                 column[i] *= 2
+                delta += column[i]
                 column.pop(i - 1)
                 column.insert(0, 0)
         for i in range(4):  # переворачиваем строку в столбец
             mas[i][j] = column[i]
-    return mas
+    return mas, delta
 
 
 def can_move(mas):  # проверка на то, возможно ли совершить одно из предыдущих четырех действий
