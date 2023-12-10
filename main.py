@@ -3,7 +3,7 @@ import pygame
 import sys
 
 
-def draw_interface():  # отрисовка интерфейса
+def draw_interface():  # отрисовка интерфейса с заполнением ячеек числами
     pygame.draw.rect(screen, COLOR_TITLE, TITLE_REC)  # создание титульника
     font = pygame.font.SysFont("clear sans", 70)  # шрифт
     pretty_print(mas)
@@ -71,11 +71,18 @@ draw_interface()
 pygame.display.update()
 while get_empty_list(mas):  # вставляем в массив рандомное число (2 или 4)
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:
+        if event.type == pygame.QUIT:  # выход из игры
             pygame.quit()
             sys.exit(0)
-        elif event.type == pygame.KEYDOWN:
-            # input()
+        elif event.type == pygame.KEYDOWN:  # процесс игры
+            if event.key == pygame.K_LEFT:
+                mas = move_left(mas)
+            elif event.key == pygame.K_RIGHT:
+                mas = move_right(mas)
+            elif event.key == pygame.K_UP:
+                mas = move_up(mas)
+            elif event.key == pygame.K_DOWN:
+                mas = move_down(mas)
             empty = get_empty_list(mas)
             random.shuffle(empty)  # перемешиванием массив
             random_num = empty.pop()
