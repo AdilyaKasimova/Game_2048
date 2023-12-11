@@ -1,23 +1,39 @@
 from logic import *
 import pygame
 import sys
+from database import get_best_3, cur
+
+GAMERS_DB = get_best_3()
+
+
+def draw_top_gamers():
+    font_top = pygame.font.SysFont("consolas", 26)  # шрифт для счёта
+    font_gamer = pygame.font.SysFont("consolas", 24)
+    text_head = font_top.render("Best tries: ", True, COLOR_TOP)
+    screen.blit(text_head, (290, 5))
+    for index, gamer in enumerate(GAMERS_DB):
+        name, score = gamer
+        s = f'{index + 1}. {name}-{score}'
+        text_gamer = font_gamer.render(s, True, COLOR_TOP)
+        screen.blit(text_gamer, (290, 30 + 20 * index))
+        print(index, name, score)
 
 
 # consolas,franklingothicmedium,microsoftjhenghei
 def draw_interface(score, delta=0):  # отрисовка интерфейса с заполнением ячеек числами
     pygame.draw.rect(screen, COLOR_TITLE, TITLE_REC)  # создание титульника
     font = pygame.font.SysFont("consolas", 70)  # шрифт для чисел
-    font_score = pygame.font.SysFont("consolas", 48)  # шрифт для счёта
+    font_score = pygame.font.SysFont("consolas", 40)  # шрифт для счёта
     font_delta = pygame.font.SysFont("consolas", 30)
     text_score = font_score.render("Score: ", True, COLOR_SCORE)  # аргументы = текст, обтекание текста, цвет
     text_score_value = font_score.render(f'{score}', True, COLOR_SCORE)
     screen.blit(text_score, (20, 35))
-    screen.blit(text_score_value, (185, 35))
+    screen.blit(text_score_value, (155, 35))
     if delta > 0:
         text_delta = font_delta.render(f"+{delta}", True, COLOR_SCORE)
-        screen.blit(text_delta, (185, 73))
-
+        screen.blit(text_delta, (155, 73))
     pretty_print(mas)
+    draw_top_gamers()
     for row in range(BLOCKS):  # создание блоков поля и отображение в них чисел
         for column in range(BLOCKS):
             value = mas[row][column]
@@ -60,7 +76,7 @@ WHITE = (255, 255, 255)
 GRAY = (130, 130, 130)
 COLOR_TITLE = (250, 248, 239)
 COLOR_MARGIN = (187, 173, 160)
-COLOR_FOR_2_AND_4 = COLOR_SCORE = (119, 110, 101)
+COLOR_FOR_2_AND_4 = COLOR_SCORE = COLOR_TOP = (119, 110, 101)
 COLOR_FOR_OTHER = (245, 245, 245)
 BLOCKS = 4
 SIZE_BLOCK = 110
@@ -75,6 +91,9 @@ mas[1][3] = 2
 mas[3][0] = 4
 print(get_empty_list(mas))
 pretty_print(mas)
+
+# for gamer in get_best():
+#     print(gamer)
 
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
