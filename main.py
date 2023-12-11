@@ -13,7 +13,7 @@ def draw_top_gamers():
     screen.blit(text_head, (290, 5))
     for index, gamer in enumerate(GAMERS_DB):
         name, score = gamer
-        s = f'{index + 1}. {name}-{score}'
+        s = f'{index + 1}. {name} {score}'
         text_gamer = font_gamer.render(s, True, COLOR_TOP)
         screen.blit(text_gamer, (290, 30 + 20 * index))
         print(index, name, score)
@@ -40,7 +40,7 @@ def draw_interface(score, delta=0):  # отрисовка интерфейса �
             if value == 2 or value == 4:
                 text = font.render(f'{value}', True, COLOR_FOR_2_AND_4)
             else:
-                text = font.render(f'{value}', True, COLOR_FOR_OTHER)
+                text = font.render(f'{value}', True, COLOR_FOR_OTHER_NUMBERS)
             w = column * SIZE_BLOCK + (column + 1) * MARGIN  # координата блока по Х
             h = row * SIZE_BLOCK + (row + 1) * MARGIN + HEIGHT_TITLE  # координата блока по Y
             pygame.draw.rect(screen, COLORS_BLOCK[value], (w, h, SIZE_BLOCK, SIZE_BLOCK))
@@ -73,12 +73,12 @@ COLORS_BLOCK = {
     2048: (232, 190, 78)
 }
 WHITE = (255, 255, 255)
-GRAY = (130, 130, 130)
+
 COLOR_TITLE = (250, 248, 239)
 COLOR_MARGIN = (187, 173, 160)
-COLOR_FOR_2_AND_4 = COLOR_SCORE = COLOR_TOP = COLOR_INTRO = (119, 110, 101)
-COLOR_FOR_OTHER = (245, 245, 245)
-COLOR_BACKGROUND = (0, 0, 0)
+COLOR_FOR_2_AND_4 = COLOR_SCORE = COLOR_TOP = COLOR_INTRO = COLOR_END = (109, 100, 91)
+COLOR_FOR_OTHER_NUMBERS = (245, 245, 245)
+COLOR_BACKGROUND = (187, 173, 160)
 BLOCKS = 4
 SIZE_BLOCK = 110
 HEIGHT_TITLE = 110
@@ -133,10 +133,44 @@ def draw_intro():
         rect_name = text_name.get_rect()
         rect_name.center = screen.get_rect().center
         screen.blit(pygame.transform.scale(image, [200, 200]), [10, 10])
-        screen.blit(text_intro, (270, 100))
+        screen.blit(text_intro, (270, 90))
         screen.blit(text_name, rect_name)
         pygame.display.update()
     screen.fill(COLOR_BACKGROUND)
+
+
+def draw_game_over():
+    font_end = pygame.font.SysFont("consolas", 40)  # шрифт для счёта
+    text_end = font_end.render("Game over!", True, COLOR_END)
+    text_score = font_end.render(f'Вы набрали {score}.', True, COLOR_END)
+    best_score = GAMERS_DB[0][1]
+    if score > best_score:
+        text = "Рекорд побит."
+    else:
+        text = f'Рекорд {best_score}.'
+    text_record = font_end.render(text, True, COLOR_END)
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:  # выход из игры
+                pygame.quit()
+                sys.exit(0)
+        screen.fill(COLOR_BACKGROUND)
+        screen.blit(text_end, (240, 90))
+        rect_score = text_score.get_rect()
+        rect_score.center = screen.get_rect().center
+        screen.blit(text_score, rect_score)
+        rect_record = text_record.get_rect()
+        rect_record.center = screen.get_rect().center
+        screen.blit(text_record, (rect_record[0], 350))
+        if text == "Рекорд побит":
+            image = pygame.image.load('hlopushka.png')
+            screen.blit(pygame.transform.scale(image, [200, 200]), [10, 10])
+        else:
+            image = pygame.image.load('krestik.jpg')
+            screen.blit(pygame.transform.scale(image, [200, 200]), [10, 10])
+
+        pygame.display.update()
+
 
 draw_intro()
 
@@ -149,6 +183,7 @@ while get_empty_list(mas) or can_move(mas):  # условия, при котор
             sys.exit(0)
         elif event.type == pygame.KEYDOWN:  # процесс игры
             delta = 0
+            mas_check = mas
             if event.key == pygame.K_LEFT:
                 mas, delta = move_left(mas)
             elif event.key == pygame.K_RIGHT:
@@ -158,12 +193,14 @@ while get_empty_list(mas) or can_move(mas):  # условия, при котор
             elif event.key == pygame.K_DOWN:
                 mas, delta = move_down(mas)
             score += delta
-            if get_empty_list(mas):
+            if get_empty_list(mas) and mas_check == mas:
                 empty = get_empty_list(mas)  # вставляем в массив рандомное число (2 или 4)
                 random.shuffle(empty)  # (перемешиванием массив)
                 random_num = empty.pop()
                 x, y = get_index_from_number(random_num)
                 mas = insert_2_or_4(mas, x, y)
-                draw_interface(score, delta)
-                pygame.display.update()
+            draw_interface(score, delta)
+            pygame.display.update()
     print(USER_NAME)
+
+draw_game_over()
