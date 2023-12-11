@@ -76,8 +76,9 @@ WHITE = (255, 255, 255)
 GRAY = (130, 130, 130)
 COLOR_TITLE = (250, 248, 239)
 COLOR_MARGIN = (187, 173, 160)
-COLOR_FOR_2_AND_4 = COLOR_SCORE = COLOR_TOP = (119, 110, 101)
+COLOR_FOR_2_AND_4 = COLOR_SCORE = COLOR_TOP = COLOR_INTRO = (119, 110, 101)
 COLOR_FOR_OTHER = (245, 245, 245)
+COLOR_BACKGROUND = (0, 0, 0)
 BLOCKS = 4
 SIZE_BLOCK = 110
 HEIGHT_TITLE = 110
@@ -86,6 +87,7 @@ WIDTH = BLOCKS * SIZE_BLOCK + (BLOCKS + 1) * MARGIN
 HEIGHT = WIDTH + HEIGHT_TITLE
 TITLE_REC = pygame.Rect((0, 0, WIDTH, HEIGHT_TITLE))
 score = 0
+USER_NAME = None
 
 mas[1][3] = 2
 mas[3][0] = 4
@@ -98,6 +100,46 @@ pretty_print(mas)
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("2048")
+
+
+def draw_intro():
+    image = pygame.image.load('og_image.png')
+    font_intro = pygame.font.SysFont("consolas", 40)  # шрифт для счёта
+    text_intro = font_intro.render("Welcome!", True, COLOR_INTRO)
+    name = 'Введите имя'
+    is_find_name = False
+    while not is_find_name:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:  # выход из игры
+                pygame.quit()
+                sys.exit(0)
+            elif event.type == pygame.KEYDOWN:
+                if event.unicode.isalpha():
+                    if name == "Введите имя":
+                        name = event.unicode
+                    else:
+                        name += event.unicode
+                elif event.key == pygame.K_BACKSPACE:
+                    name = name[:-1]
+                elif event.key == pygame.K_RETURN:
+                    if len(name) > 0:
+                        global USER_NAME
+                        USER_NAME = name
+                        is_find_name = True
+                        break
+
+        screen.fill(COLOR_BACKGROUND)
+        text_name = font_intro.render(name, True, COLOR_INTRO)
+        rect_name = text_name.get_rect()
+        rect_name.center = screen.get_rect().center
+        screen.blit(pygame.transform.scale(image, [200, 200]), [10, 10])
+        screen.blit(text_intro, (270, 100))
+        screen.blit(text_name, rect_name)
+        pygame.display.update()
+    screen.fill(COLOR_BACKGROUND)
+
+draw_intro()
+
 draw_interface(score)
 pygame.display.update()
 while get_empty_list(mas) or can_move(mas):  # условия, при которых игра продолжается
@@ -124,3 +166,4 @@ while get_empty_list(mas) or can_move(mas):  # условия, при котор
                 mas = insert_2_or_4(mas, x, y)
                 draw_interface(score, delta)
                 pygame.display.update()
+    print(USER_NAME)
