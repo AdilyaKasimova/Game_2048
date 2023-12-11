@@ -1,7 +1,7 @@
 from logic import *
 import pygame
 import sys
-from database import get_best_3, cur
+from database import get_best_3, cur, insert_result
 
 GAMERS_DB = get_best_3()
 
@@ -87,7 +87,7 @@ WIDTH = BLOCKS * SIZE_BLOCK + (BLOCKS + 1) * MARGIN
 HEIGHT = WIDTH + HEIGHT_TITLE
 TITLE_REC = pygame.Rect((0, 0, WIDTH, HEIGHT_TITLE))
 score = 0
-USER_NAME = None
+USERNAME = None
 
 mas[1][3] = 2
 mas[3][0] = 4
@@ -123,8 +123,8 @@ def draw_intro():
                     name = name[:-1]
                 elif event.key == pygame.K_RETURN:
                     if len(name) > 0:
-                        global USER_NAME
-                        USER_NAME = name
+                        global USERNAME
+                        USERNAME = name
                         is_find_name = True
                         break
 
@@ -149,6 +149,7 @@ def draw_game_over():
     else:
         text = f'Рекорд {best_score}.'
     text_record = font_end.render(text, True, COLOR_END)
+    insert_result(USERNAME, score)
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:  # выход из игры
@@ -201,6 +202,6 @@ while get_empty_list(mas) or can_move(mas):  # условия, при котор
                 mas = insert_2_or_4(mas, x, y)
             draw_interface(score, delta)
             pygame.display.update()
-    print(USER_NAME)
+    print(USERNAME)
 
 draw_game_over()
