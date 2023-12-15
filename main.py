@@ -99,7 +99,7 @@ def init_const():
 
 
 mas = None
-score = None
+score = 0
 init_const()
 USERNAME = None
 pretty_print(mas)
@@ -147,7 +147,7 @@ def draw_intro():
 
 
 def draw_game_over():
-    global USERNAME, mas, score
+    global USERNAME, mas, score, GAMERS_DB
     font_end = pygame.font.SysFont("consolas", 40)  # шрифт для счёта
     text_end = font_end.render("Game over!", True, COLOR_END)
     text_score = font_end.render(f'Вы набрали {score}.', True, COLOR_END)
@@ -161,19 +161,20 @@ def draw_game_over():
         text = f'Рекорд {best_score}.'
     text_record = font_end.render(text, True, COLOR_END)
     insert_result(USERNAME, score)
-    make_disicion = False
-    while not make_disicion:
+    GAMERS_DB = get_best_3()
+    make_decision = False
+    while not make_decision:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:  # выход из игры
                 pygame.quit()
                 sys.exit(0)
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:  # начинаем новую игру с тем же именем
-                    make_disicion = True
+                    make_decision = True
                     init_const()
                 elif event.key == pygame.K_RETURN:  # начинаем новую игру с другим именем
                     USERNAME = None
-                    make_disicion = True
+                    make_decision = True
                     init_const()
         screen.fill(COLOR_BACKGROUND)
         screen.blit(text_end, (240, 90))
@@ -198,6 +199,7 @@ def game_loop():
     global score, mas
     draw_interface(score)
     pygame.display.update()
+    is_mas_move = False
     while get_empty_list(mas) or can_move(mas):  # условия, при которых игра продолжается
         for event in pygame.event.get():
             if event.type == pygame.QUIT:  # выход из игры
@@ -206,16 +208,15 @@ def game_loop():
             elif event.type == pygame.KEYDOWN:  # процесс игры
                 delta = 0
                 if event.key == pygame.K_LEFT:
-                    mas, delta = move_left(mas)
+                    mas, delta, is_mas_move = move_left(mas)
                 elif event.key == pygame.K_RIGHT:
-                    mas, delta = move_right(mas)
+                    mas, delta, is_mas_move = move_right(mas)
                 elif event.key == pygame.K_UP:
-                    mas, delta = move_up(mas)
+                    mas, delta, is_mas_move = move_up(mas)
                 elif event.key == pygame.K_DOWN:
-                    mas, delta = move_down(mas)
+                    mas, delta, is_mas_move = move_down(mas)
                 score += delta
-                if (event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT or event.key == pygame.K_UP or \
-                        event.key == pygame.K_DOWN) and get_empty_list(mas):
+                if is_mas_move and get_empty_list(mas):
                     empty = get_empty_list(mas)  # вставляем в массив рандомное число (2 или 4)
                     random.shuffle(empty)  # (перемешиванием массив)
                     random_num = empty.pop()

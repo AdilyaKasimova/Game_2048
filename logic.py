@@ -1,4 +1,5 @@
 import random
+import copy
 
 
 def pretty_print(mas):
@@ -37,6 +38,7 @@ def insert_2_or_4(mas, x, y):  # вставляем в ячейку по ее и
 
 
 def move_left(mas):  # движение влево
+    origin = copy.deepcopy(mas)
     delta = 0
     for row in mas:
         while 0 in row:  # сдвиг чисел влево
@@ -50,10 +52,11 @@ def move_left(mas):  # движение влево
                 delta += mas[i][j]
                 mas[i].pop(j + 1)
                 mas[i].append(0)
-    return mas, delta
+    return mas, delta, mas != origin
 
 
 def move_right(mas):  # движение вправо
+    origin = copy.deepcopy(mas)
     delta = 0
     for row in mas:
         while 0 in row:  # сдвиг чисел вправо
@@ -67,10 +70,11 @@ def move_right(mas):  # движение вправо
                 delta += mas[i][j]
                 mas[i].pop(j - 1)
                 mas[i].insert(0, 0)
-    return mas, delta
+    return mas, delta, mas != origin
 
 
 def move_up(mas):  # движение вверх
+    origin = copy.deepcopy(mas)
     delta = 0
     for j in range(4):
         column = []
@@ -87,10 +91,11 @@ def move_up(mas):  # движение вверх
                 column.append(0)
         for i in range(4):  # переворачиваем строку в столбец
             mas[i][j] = column[i]
-    return mas, delta
+    return mas, delta, mas != origin
 
 
 def move_down(mas):  # движение вниз
+    origin = copy.deepcopy(mas)
     delta = 0
     for j in range(4):
         column = []
@@ -107,13 +112,17 @@ def move_down(mas):  # движение вниз
                 column.insert(0, 0)
         for i in range(4):  # переворачиваем строку в столбец
             mas[i][j] = column[i]
-    return mas, delta
+    return mas, delta, mas != origin
 
 
 def can_move(mas):  # проверка на то, возможно ли совершить одно из предыдущих четырех действий
-    for i in range(3):
+    for i in range(4):
         for j in range(3):
-            if (mas[i][j] == mas[i + 1][j]) or (mas[i][j] == mas[i][j + 1]):
+            if mas[i][j] == mas[i][j + 1]:
+                return True
+    for i in range(3):
+        for j in range(4):
+            if mas[i][j] == mas[i + 1][j]:
                 return True
     return False
 
