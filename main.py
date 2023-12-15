@@ -1,7 +1,7 @@
 from logic import *
 import pygame
 import sys
-from database import get_best_3, cur, insert_result
+from database import get_best_3, insert_result
 import json  # для сохранения данных при преждевременном закрытии игры
 import os  # для проверки наличия файла в папке
 
@@ -20,10 +20,12 @@ def draw_top_gamers():
         screen.blit(text_gamer, (290, 30 + 20 * index))
 
 
-# consolas,franklingothicmedium,microsoftjhenghei
 def draw_interface(score, delta=0):  # отрисовка интерфейса с заполнением ячеек числами
+    screen.fill(COLOR_BACKGROUND)
     pygame.draw.rect(screen, COLOR_TITLE, TITLE_REC)  # создание титульника
-    font = pygame.font.SysFont("consolas", 70)  # шрифт для чисел
+    font_1_2 = pygame.font.SysFont("consolas", 65)  # шрифт для одно- и двузначных чисел
+    font_3 = pygame.font.SysFont("consolas", 60)  # шрифт для трехзначных чисел
+    font_4 = pygame.font.SysFont("consolas", 48)  # шрифт для четырехзначных чисел
     font_score = pygame.font.SysFont("consolas", 40)  # шрифт для счёта
     font_delta = pygame.font.SysFont("consolas", 30)
     text_score = font_score.render("Score: ", True, COLOR_SCORE)  # аргументы = текст, обтекание текста, цвет
@@ -39,9 +41,13 @@ def draw_interface(score, delta=0):  # отрисовка интерфейса �
         for column in range(BLOCKS):
             value = mas[row][column]
             if value == 2 or value == 4:
-                text = font.render(f'{value}', True, COLOR_FOR_2_AND_4)
+                text = font_1_2.render(f'{value}', True, COLOR_FOR_2_AND_4)
+            elif value == 8 or value == 16 or value == 32 or value == 64:
+                text = font_1_2.render(f'{value}', True, COLOR_FOR_OTHER_NUMBERS)
+            elif value == 128 or value == 256 or value == 512:
+                text = font_3.render(f'{value}', True, COLOR_FOR_OTHER_NUMBERS)
             else:
-                text = font.render(f'{value}', True, COLOR_FOR_OTHER_NUMBERS)
+                text = font_4.render(f'{value}', True, COLOR_FOR_OTHER_NUMBERS)
             w = column * SIZE_BLOCK + (column + 1) * MARGIN  # координата блока по Х
             h = row * SIZE_BLOCK + (row + 1) * MARGIN + HEIGHT_TITLE  # координата блока по Y
             pygame.draw.rect(screen, COLORS_BLOCK[value], (w, h, SIZE_BLOCK, SIZE_BLOCK))
@@ -68,7 +74,6 @@ COLORS_BLOCK = {
 }
 WHITE = (255, 255, 255)
 COLOR_TITLE = (250, 248, 239)
-COLOR_MARGIN = (187, 173, 160)
 COLOR_FOR_2_AND_4 = COLOR_SCORE = COLOR_TOP = COLOR_INTRO = COLOR_END = (109, 100, 91)
 COLOR_FOR_OTHER_NUMBERS = (245, 245, 245)
 COLOR_BACKGROUND = (187, 173, 160)
@@ -103,6 +108,7 @@ def init_const():
 mas = None
 score = 0
 USERNAME = None
+availability_2048 = False
 path = os.getcwd()  # определяем путь к папке
 if 'data.txt' in os.listdir(path):
     with open('data.txt') as file:
@@ -162,7 +168,8 @@ def draw_intro():
 def draw_game_over():
     global USERNAME, mas, score, GAMERS_DB
     font_end = pygame.font.SysFont("consolas", 40)  # шрифт для счёта
-    text_end = font_end.render("Game over!", True, COLOR_END)
+    text_bad_end = font_end.render("Game over!", True, COLOR_END)
+    text_good_end = font_end.render("You win!", True, COLOR_END)
     text_score = font_end.render(f'Вы набрали {score}.', True, COLOR_END)
     if len(GAMERS_DB) == 0:
         best_score = 0
@@ -190,22 +197,22 @@ def draw_game_over():
                     make_decision = True
                     init_const()
         screen.fill(COLOR_BACKGROUND)
-        screen.blit(text_end, (240, 90))
+        if not availability_2048:
+            screen.blit(text_bad_end, (240, 90))
+            image = pygame.image.load('krestik.jpg')
+            screen.blit(pygame.transform.scale(image, [200, 200]), [10, 10])
+        else:
+            screen.blit(text_good_end, (240, 90))
+            image = pygame.image.load('hlopushka.png')
+            screen.blit(pygame.transform.scale(image, [200, 200]), [10, 10])
         rect_score = text_score.get_rect()
         rect_score.center = screen.get_rect().center
         screen.blit(text_score, rect_score)
         rect_record = text_record.get_rect()
         rect_record.center = screen.get_rect().center
         screen.blit(text_record, (rect_record[0], 350))
-        if text == "Новый рекорд.":
-            image = pygame.image.load('.png')
-            screen.blit(pygame.transform.scale(image, [200, 200]), [10, 10])
-        elif text == f'Рекорд {best_score}.':
-            image = pygame.image.load('krestik.jpg')
-            screen.blit(pygame.transform.scale(image, [200, 200]), [10, 10])
-
         pygame.display.update()
-    screen.fill(COLOR_BACKGROUND)
+        screen.fill(COLOR_BACKGROUND)
 
 
 def save_game():
@@ -219,7 +226,7 @@ def save_game():
 
 
 def game_loop():
-    global score, mas
+    global score, mas, availability_2048
     draw_interface(score)
     pygame.display.update()
     is_mas_move = False
@@ -248,6 +255,10 @@ def game_loop():
                     mas = insert_2_or_4(mas, x, y)
                 draw_interface(score, delta)
                 pygame.display.update()
+                for row in mas:
+                    if 2048 in row:
+                        availability_2048 = True
+                        draw_game_over()
 
 
 while True:
