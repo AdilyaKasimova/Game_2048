@@ -2,6 +2,8 @@ from logic import *
 import pygame
 import sys
 from database import get_best_3, cur, insert_result
+import json  # для сохранения данных при преждевременном закрытии игры
+import os  # для проверки наличия файла в папке
 
 GAMERS_DB = get_best_3()
 
@@ -100,8 +102,19 @@ def init_const():
 
 mas = None
 score = 0
-init_const()
 USERNAME = None
+path = os.getcwd()  # определяем путь к папке
+if 'data.txt' in os.listdir(path):
+    with open('data.txt') as file:
+        data = json.load(file)  # сохраняем содержимое файла в переменную data
+        mas = data['mas']
+        score = data['score']
+        USERNAME = data['user']
+    full_path = os.path.join(path, 'data.txt')  # благодаря join в пути вместо \ между элементами будет \\
+    os.remove(full_path)  # удаляем файл data.txt
+else:
+    init_const()
+
 pretty_print(mas)
 
 pygame.init()
@@ -195,6 +208,16 @@ def draw_game_over():
     screen.fill(COLOR_BACKGROUND)
 
 
+def save_game():
+    data = {
+        'user': USERNAME,
+        'score': score,
+        'mas': mas
+    }
+    with open('data.txt', 'w') as outfile:
+        json.dump(data, outfile)  # сохраняем наш словарик в файл
+
+
 def game_loop():
     global score, mas
     draw_interface(score)
@@ -203,6 +226,7 @@ def game_loop():
     while get_empty_list(mas) or can_move(mas):  # условия, при которых игра продолжается
         for event in pygame.event.get():
             if event.type == pygame.QUIT:  # выход из игры
+                save_game()
                 pygame.quit()
                 sys.exit(0)
             elif event.type == pygame.KEYDOWN:  # процесс игры

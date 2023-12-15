@@ -9,7 +9,7 @@ class Test_2048(unittest.TestCase):
         self.assertEqual(get_number_from_index(0, 0), 1)
         self.assertEqual(get_number_from_index(1, 2), 7)
 
-    def test_get_empty_list(self):
+    def test_get_empty_list_1(self):
         a = [1, 2, 3, 5, 7, 8, 10, 11, 12, 13, 14, 16]
         mas = [
             [0, 0, 0, 2],
@@ -18,6 +18,8 @@ class Test_2048(unittest.TestCase):
             [0, 0, 2, 0]
         ]
         self.assertEqual(get_empty_list(mas), a)
+
+    def test_get_empty_list_2(self):
         a = []
         mas = [
             [2, 2, 2, 2],
@@ -26,6 +28,8 @@ class Test_2048(unittest.TestCase):
             [2, 2, 2, 2]
         ]
         self.assertEqual(get_empty_list(mas), a)
+
+    def test_get_empty_list_3(self):
         a = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
         mas = [
             [0, 0, 0, 0],
@@ -40,7 +44,7 @@ class Test_2048(unittest.TestCase):
         self.assertEqual(get_index_from_number(16), (3, 3))
         self.assertEqual(get_index_from_number(5), (1, 0))
 
-    def test_move_left(self):
+    def test_move_left_1(self):
         mas = [
             [2, 2, 0, 0],
             [0, 4, 4, 0],
@@ -54,6 +58,8 @@ class Test_2048(unittest.TestCase):
             [0, 0, 0, 0]
         ]
         self.assertEqual(move_left(mas), (rez, 12, True))
+
+    def test_move_left_2(self):
         mas = [
             [2, 4, 4, 2],
             [4, 0, 0, 2],
@@ -68,7 +74,7 @@ class Test_2048(unittest.TestCase):
         ]
         self.assertEqual(move_left(mas), (rez, 32, True))
 
-    def test_move_right(self):
+    def test_move_right_1(self):
         mas = [
             [2, 2, 0, 0],
             [0, 4, 4, 0],
@@ -82,6 +88,8 @@ class Test_2048(unittest.TestCase):
             [0, 0, 0, 0]
         ]
         self.assertEqual(move_right(mas), (rez, 12, True))
+
+    def test_move_right_2(self):
         mas = [
             [2, 4, 4, 2],
             [4, 0, 0, 2],
@@ -126,7 +134,7 @@ class Test_2048(unittest.TestCase):
         ]
         self.assertEqual(move_down(mas), (rez, 24, True))
 
-    def test_can_move(self):
+    def test_can_move_1(self):
         mas = [
             [2, 2, 0, 0],
             [2, 0, 4, 2],
@@ -134,6 +142,8 @@ class Test_2048(unittest.TestCase):
             [4, 0, 4, 0]
         ]
         self.assertEqual(can_move(mas), True)
+
+    def test_can_move_2(self):
         mas = [
             [4, 2, 1, 3],
             [2, 1, 3, 4],
@@ -141,29 +151,6 @@ class Test_2048(unittest.TestCase):
             [3, 4, 2, 1]
         ]
         self.assertEqual(can_move(mas), False)
-
-    # def test_is_zero_in_mas(self):
-    #     mas = [
-    #         [0, 0, 0, 0],
-    #         [0, 0, 0, 0],
-    #         [0, 0, 0, 0],
-    #         [0, 0, 0, 0]
-    #     ]
-    #     self.assertEqual(is_zero_in_mas(mas), True)
-    #     mas = [
-    #         [2, 2, 2, 2],
-    #         [2, 2, 2, 2],
-    #         [2, 2, 2, 2],
-    #         [2, 2, 2, 2]
-    #     ]
-    #     self.assertEqual(is_zero_in_mas(mas), False)
-    #     mas = [
-    #         [2, 0, 2, 0],
-    #         [2, 2, 0, 2],
-    #         [2, 0, 4, 0],
-    #         [2, 0, 4, 0]
-    #     ]
-    #     self.assertEqual(is_zero_in_mas(mas), True)
 
 
 if __name__ == 'main':
