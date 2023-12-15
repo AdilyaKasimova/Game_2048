@@ -102,7 +102,6 @@ mas = None
 score = None
 init_const()
 USERNAME = None
-print(get_empty_list(mas))
 pretty_print(mas)
 
 pygame.init()
@@ -185,7 +184,7 @@ def draw_game_over():
         rect_record.center = screen.get_rect().center
         screen.blit(text_record, (rect_record[0], 350))
         if text == "Новый рекорд.":
-            image = pygame.image.load('hlopushka.png')
+            image = pygame.image.load('.png')
             screen.blit(pygame.transform.scale(image, [200, 200]), [10, 10])
         elif text == f'Рекорд {best_score}.':
             image = pygame.image.load('krestik.jpg')
@@ -214,17 +213,16 @@ def game_loop():
                     mas, delta = move_up(mas)
                 elif event.key == pygame.K_DOWN:
                     mas, delta = move_down(mas)
-                if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT or event.key == pygame.K_UP or \
-                        event.key == pygame.K_DOWN:
-                    score += delta
-                    if get_empty_list(mas):
-                        empty = get_empty_list(mas)  # вставляем в массив рандомное число (2 или 4)
-                        random.shuffle(empty)  # (перемешиванием массив)
-                        random_num = empty.pop()
-                        x, y = get_index_from_number(random_num)
-                        mas = insert_2_or_4(mas, x, y)
-                    draw_interface(score, delta)
-                    pygame.display.update()
+                score += delta
+                if (event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT or event.key == pygame.K_UP or \
+                        event.key == pygame.K_DOWN) and get_empty_list(mas):
+                    empty = get_empty_list(mas)  # вставляем в массив рандомное число (2 или 4)
+                    random.shuffle(empty)  # (перемешиванием массив)
+                    random_num = empty.pop()
+                    x, y = get_index_from_number(random_num)
+                    mas = insert_2_or_4(mas, x, y)
+                draw_interface(score, delta)
+                pygame.display.update()
 
 
 while True:

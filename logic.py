@@ -113,12 +113,38 @@ def move_down(mas):  # движение вниз
 def can_move(mas):  # проверка на то, возможно ли совершить одно из предыдущих четырех действий
     for i in range(3):
         for j in range(3):
-            if (mas[i][j] == mas[i + 1][j] and mas[i][j] != 0) or (mas[i][j] == mas[i][j + 1] and mas[i][j] != 0):
+            if (mas[i][j] == mas[i + 1][j]) or (mas[i][j] == mas[i][j + 1]):
                 return True
     return False
-# def is_zero_in_mas(mas):  # проверяем массив на наличие пустых ячеек
-#     for row in mas:
-#         if 0 in row:
-#             return True
-#         else:
-#             return False
+
+
+def is_zero_for_left(mas):
+    for row in mas:
+        for i in range(3):
+            if row[i] != 0 and row[i + 1] == 0:
+                return True
+    return False
+
+
+def is_zero_for_right(mas):
+    for row in mas:
+        for i in range(3):
+            if row[i] == 0 and row[i + 1] != 0:
+                return True
+    return False
+
+
+def is_zero_for_up(mas):
+    for j in range(4):
+        for i in range(3):
+            if mas[i][j] == 0 and mas[i + 1][j] != 0:
+                return True
+    return False
+
+
+def is_zero_for_down(mas):
+    for j in range(4):
+        for i in range(3):
+            if mas[i][j] != 0 and mas[i + 1][j] == 0:
+                return True
+    return False
